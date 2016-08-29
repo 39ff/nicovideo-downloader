@@ -40,8 +40,8 @@ class Downloader{
             return ['mode'=>'overwrite','token'=>$m[2]];
         }
 
-        if(preg_match('@Nicolive.TimeshiftActions.confirmToWatch\(\'([0-9]++)\',\s\'([a-zA-Z0-9_]++)@',$response,$m)){
-            return ['mode'=>'none','token'=>NULL];
+        if(preg_match('@Nicolive.TimeshiftActions.confirmToWatch\(\'([a-zA-Z0-9_]++)\',\s\'([a-zA-Z0-9_]++)@',$response,$m)){
+            return ['mode'=>'use','token'=>$m[2]];
         }
 
         if(preg_match('@Nicolive.TimeshiftActions.moveWatch@',$response,$m)){
@@ -65,20 +65,26 @@ class Downloader{
             ]
         ]);
 
-
         $reserveInfo = self::getTimeShiftReserveToken((string)$response->getBody());
 
         if(strcmp($reserveInfo['mode'],'none') === 0){
             return true;
         }
 
-        $response = $this->client->request('POST', 'http://live.nicovideo.jp/api/watchingreservation', [
-            'query'=>[
+        $params =
+            [
                 'mode'=>$reserveInfo['mode'],
                 'vid'=>str_replace('lv','',$lv),
                 'token'=>$reserveInfo['token']
-            ]
+            ];
+        if($reserveInfo['mode'] == 'use'){
+            $params['accept'] = 'true';
+        }
+        $response = $this->client->request('POST', 'http://live.nicovideo.jp/api/watchingreservation', [
+            'form_params'=>$params
         ]);
+
+
 
         return (string)$response->getBody();
 
@@ -147,7 +153,7 @@ class Downloader{
 
     }
 
-    public function __construct(GuzzleHttp\ClientInterface $client =  null){
+    public function __construct($client =  null){
 
         if(!isset($client)){
             $client = new \GuzzleHttp\Client(
