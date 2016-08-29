@@ -32,11 +32,11 @@ class Downloader{
     private function getTimeShiftReserveToken($response){
 
 
-        if(preg_match('@Nicolive.WatchingReservation.auto_register\(\'([0-9]++)\',\s\'([a-zA-Z0-9_]++)@',$response,$m)){
+        if(preg_match('@Nicolive.WatchingReservation.auto_register\(\'([a-zA-Z0-9_]++)\',\s\'([a-zA-Z0-9_]++)@',$response,$m)){
             return ['mode'=>'auto_register','token'=>$m[2]];
         }
 
-        if(preg_match('@Nicolive.TimeshiftActions.doRegister\(\'([0-9]++)\',\s\'([a-zA-Z0-9_]++)@',$response,$m)){
+        if(preg_match('@Nicolive.TimeshiftActions.doRegister\(\'([a-zA-Z0-9_]++)\',\s\'([a-zA-Z0-9_]++)@',$response,$m)){
             return ['mode'=>'overwrite','token'=>$m[2]];
         }
 
@@ -73,13 +73,12 @@ class Downloader{
 
         $params =
             [
+                'accept'=>'true',
                 'mode'=>$reserveInfo['mode'],
                 'vid'=>str_replace('lv','',$lv),
                 'token'=>$reserveInfo['token']
             ];
-        if($reserveInfo['mode'] == 'use'){
-            $params['accept'] = 'true';
-        }
+
         $response = $this->client->request('POST', 'http://live.nicovideo.jp/api/watchingreservation', [
             'form_params'=>$params
         ]);
