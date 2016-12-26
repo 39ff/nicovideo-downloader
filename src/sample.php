@@ -6,12 +6,13 @@ use NicoDL\Downloader;
 
 try {
     $to = new Downloader();
-    $to->login('email', 'password');
-    $to->getTimeShiftTicket('lv273112241');
-    $result = $to->getTimeShiftPublishURL('lv273112241');
+    $to->login($argv[1], $argv[2])->getTimeShiftTicket($argv[3]);
+    $result = $to->getTimeShiftPublishURL($argv[3]);
     $command = $to->getRtmpCommand($result);
 
-    print_r($command);
+    foreach ($command as $cmd){
+        echo $cmd.PHP_EOL;
+    }
 
 }catch(\NicoDL\DownloaderException $e){
     echo 'error : ' .($e->getMessage());

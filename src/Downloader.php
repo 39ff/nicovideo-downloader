@@ -85,7 +85,7 @@ class Downloader{
 
 
 
-        return (string)$response->getBody();
+        return $this;
 
     }
 
@@ -109,7 +109,7 @@ class Downloader{
         $count = 1;
        foreach($results['queue'] as $r){
            $explode = explode(' ',$r);
-           $rtmp[] = 'rtmpdump -r '.$results['rtmpURL'].' -y mp4:'.$explode[2].' -C S:'.$results['ticket'].' -e -o '.$results['lv'].'-'.$count.'.flv';
+           $rtmp[] = 'rtmpdump -r '.$results['rtmpURL'].' -y mp4:'.$explode[2].' -C S:'.$results['ticket'].' -e -o '.$results['lv'].'-'.$count.'.flv &';
            $count++;
 
        }
@@ -148,7 +148,7 @@ class Downloader{
                 'password'=>$password
             ]
         ]);
-        return (string)$response->getBody();
+        return $this;
 
     }
 
